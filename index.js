@@ -8,7 +8,8 @@
         dom: document.getElementsByTagName('body'),
         color: '#000',
         nodes: [],
-        links: []
+        links: [],
+        icons: []
     }
 
     function drawForce(option = defaultOption) {
@@ -18,7 +19,7 @@
         const links = option.links;
         const nodes = option.nodes;
 
-        const color = (d,i) => {
+        const color = (d, i) => {
             const scale = d3.schemeCategory10;
             return scale[i];
         }
@@ -63,15 +64,47 @@
             .join("line")
             .attr("stroke-width", 1);
 
-        const node = svg.append("g")
-            .attr("stroke", "#fff")
-            .attr("stroke-width", 1.5)
-            .selectAll("circle")
+        let node = svg.append("g")
+            .selectAll("g")
             .data(nodes)
-            .join("circle")
-            .attr("r", 5)
-            .attr("fill", color)
+            .join("g")
+            .attr('class', 'force-node')
             .call(drag(simulation));
+        if (option.icons.length) {
+            svg.selectAll('.force-node')
+                .append('rect')
+                .attr('width', 25)
+                .attr('height', 30)
+                .attr('fill','#fff');
+
+            svg.selectAll('.force-node')
+                .append('path')
+                .attr("d", d => {
+                    return option.icons.find(item => {
+                        return item.type == d.type
+                    }).icon;
+                })
+                .attr('class','icon-path')
+                .attr("fill", option.color)
+                .attr('transform','scale(0.03)')
+
+        } else {
+            svg.selectAll('.force-node')
+                .append("circle")
+                .attr("r", 5)
+                .attr("fill", color)
+                .call(drag(simulation));
+        }
+
+        const text = svg.selectAll('.force-node')
+            .append('text')
+            .text(d=>d.name)
+            .attr('style', d=>{
+                let trans = 0;
+                trans = d.name.length*3;
+                return `transform: translate(-${trans}px, 42px);`
+            })
+
 
         node.append("title")
             .text(d => d.name);
@@ -84,8 +117,10 @@
                 .attr("y2", d => d.target.y);
 
             node
-                .attr("cx", d => d.x)
-                .attr("cy", d => d.y);
+                .attr("transform", d => `translate(${d.x-10},${d.y-10})`);
+
+            // text.attr("x", d => d.x)
+            //     .attr("y", d => d.y)
         });
     }
 

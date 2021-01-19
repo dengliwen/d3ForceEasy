@@ -1,7 +1,12 @@
 ## d3 Force Easy
-< 一个封装D3js force简单使用的轮子>
+< 一个封装D3js force力导向图 简单使用的轮子>
+
+#### 依赖d3.js
 ### 使用方法
 ```
+1.npm install把d3装上
+
+2.引入配置和数据
  import  d3ForceEasy from 'd3_force_easy'
  
  ...
@@ -9,7 +14,8 @@
      dom:document.getElementById('app'),
      color:'#000',
      nodes:this.nodes,
-     links:this.links
+     links:this.links,
+     icons:[{type:'ip',icon:'(svg <path>的d路径属性)'}]
      ...
  }
  
