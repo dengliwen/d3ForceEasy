@@ -1,14 +1,15 @@
 {
-  "name": "d3ForceEasy",
-  "version": "1.0.0",
+  "name": "d3_force_easy",
+  "version": "1.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "d3ForceEasy.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "d3": "^6.3.1"
   },
-  "author": "dengbill",
+  "author": "dlwbill <18801266814@163.com>",
+  "repository": "git@github.com/dengliwen/d3ForceEasy",
   "license": "ISC"
 }

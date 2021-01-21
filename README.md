@@ -1,10 +1,10 @@
 ## d3ForceEasy
 < 一个封装D3js force力导向图 简单使用的轮子>
 
->依赖d3.js
+>依赖d3.js >v4.0.0
 ### 使用方法
 
-    1.复制项目到node_modules,然后npm install把d3装上
+    1.npm install d3_force_easy --save
     
     2.引入配置和数据
 
@@ -76,7 +76,7 @@ const links = [
 }
 ```
 
-###功能
+### 功能
 
 **新增节点**
 
