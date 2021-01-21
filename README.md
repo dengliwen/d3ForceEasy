@@ -76,4 +76,10 @@ const links = [
 }
 ```
 
+###功能
+
+**新增节点**
+
+    d3ForceEasy.addNodes(newNodesSourceId = 0,newNodes = [])
+
 升级改造中。。。

@@ -9,12 +9,21 @@
     #app{
         width:800px;
         height:700px;
-        border:1px solid #ccc
+        border:1px solid #ccc;
+        position: relative;
+    }
+    .handle{
+        position: absolute;
+        top:10px;
+        left:10px;
     }
 </style>
 
 <body>
     <div id="app">
+        <div class="handle">
+            <button onClick="addNodes()">新增节点</button>
+        </div>
 
     </div>
 </body>
@@ -50,6 +59,18 @@
             ]
     }
 
-    d3ForceEasy.drawForce(option)
+    d3ForceEasy.drawForce(option);
+
+//++++++++++++++++++++++++++++++
+    const newNodes = [
+        {name:'13928287765',id:18,type:'phone'},
+        {name:'as76a675das78d6a87sd6f58as798as',id:19,type:'md5'}
+    ];
+    const newNodesSourceId = 15;
+
+    function addNodes(){
+        d3ForceEasy.addNodes(newNodesSourceId,newNodes)
+    }
+
 </script>
 </html>
