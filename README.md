@@ -1,26 +1,26 @@
-## d3 Force Easy
+## d3ForceEasy
 < 一个封装D3js force力导向图 简单使用的轮子>
 
-#### 依赖d3.js
+>依赖d3.js
 ### 使用方法
-```
-1.npm install把d3装上
 
-2.引入配置和数据
- import  d3ForceEasy from 'd3_force_easy'
+    1.复制项目到node_modules,然后npm install把d3装上
+    
+    2.引入配置和数据
+
+    import  d3ForceEasy from 'd3_force_easy'
+    
+    ...
+    //基础配置
+    const option = {
+        dom:document.getElementById('app'),
+        nodes:this.nodes,
+        links:this.links,
+        ...
+    }
  
- ...
- const option = {
-     dom:document.getElementById('app'),
-     color:'#000',
-     nodes:this.nodes,
-     links:this.links,
-     icons:[{type:'ip',icon:'(svg <path>的d路径属性)'}]
-     ...
- }
- 
- d3ForceEasy.drawForce(option)
-```
+    d3ForceEasy.drawForce(option)
+
 
 ### 测试数据
 ```
@@ -41,6 +41,39 @@ const links = [
     {source:3,target:5},
 ]
 
+```
+
+### 详细配置
+```
+ const option = {
+        dom: document.getElementsByTagName('app'),
+        color: '#00a8ff',
+        nodes:this.nodes,
+        links:this.links,
+        icons:[{type:'ip',icon:'(svg <path>的d路径属性)'},...],
+        text:{
+            show:true,
+            style:''
+        },
+        forceParams:{ //力导向参数
+            center:{
+                x:0,
+                y:0
+            },//向心力
+            collide:{
+                radius:1,
+                strength:1,//[0,1]碰撞强度
+            },//碰撞力
+            link:{
+                distance:0,
+                strength:0,
+                id:'index',//links使用标识
+            },//弹簧模型
+            charge:{
+                strength:-30,//负值相互排斥
+            },//电荷力模型
+        }
+}
 ```
 
 升级改造中。。。

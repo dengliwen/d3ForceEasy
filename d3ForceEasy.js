@@ -4,15 +4,49 @@
             (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.d3ForceEasy = global.d3ForceEasy || {}));
 }(this, (function (exports) {
     'use strict';
-    const defaultOption = {
+    const option = {
         dom: document.getElementsByTagName('body'),
         color: '#000',
         nodes: [],
         links: [],
-        icons: []
+        icons: [],
+        text:{
+            show:true,
+            style:''
+        },
+        alpha:1,//衰减系数，[0,1]之间,越小迭代次数越多，0时迭代不会停止。
+        // forceParams:{ //力导向参数
+        //     center:{
+        //         x:0,
+        //         y:0
+        //     },//向心力
+        //     collide:{
+        //         radius:1,
+        //         strength:1,//[0,1]碰撞强度
+        //     },//碰撞力
+        //     link:{
+        //         distance:0,
+        //         strength:0,
+        //         id:'index',//links使用标识
+        //     },//弹簧模型
+        //     charge:{
+        //         strength:-30,//负值相互排斥
+        //     },//电荷力模型
+        // }
     }
 
-    function drawForce(option = defaultOption) {
+    function extend(o, n, override) {
+        for (let p in n) {
+            if (n.hasOwnProperty(p) && (!o.hasOwnProperty(p) || override))
+                o[p] = n[p];
+        }
+    }
+
+
+
+    function drawForce(userOption) {
+        extend(option,userOption,true);
+
         const dom = option.dom;
         const height = dom.offsetHeight;
         const width = dom.offsetWidth;
@@ -49,7 +83,7 @@
         }
 
         const simulation = d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links))
+            .force("link", d3.forceLink(links).distance(200))
             .force("charge", d3.forceManyBody())
             .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -99,11 +133,15 @@
         const text = svg.selectAll('.force-node')
             .append('text')
             .text(d=>d.name)
+            .attr('class','node-text')
             .attr('style', d=>{
-                let trans = 0;
-                trans = d.name.length*3;
+                let trans = d.name.length*3;
                 return `transform: translate(-${trans}px, 42px);`
             })
+
+        if(!option.text.show){
+            svg.selectAll('.node-text').attr('style','display:none')
+        }
 
 
         node.append("title")
