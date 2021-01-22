@@ -7,7 +7,7 @@
     1.npm install d3_force_easy --save
     
     2.引入配置和数据
-
+    
     import  d3ForceEasy from 'd3_force_easy'
     
     ...
