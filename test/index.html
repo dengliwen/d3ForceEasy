@@ -18,11 +18,14 @@
         left:10px;
     }
 </style>
+<link rel="stylesheet" href="../d3ForceEasy.css">
 
 <body>
     <div id="app">
         <div class="handle">
+            <button onClick="toggleName()">显示/隐藏名称</button>
             <button onClick="addNodes()">新增节点</button>
+            <button onClick="removeNode()">删除选中节点</button>
         </div>
 
     </div>
@@ -72,5 +75,11 @@
         d3ForceEasy.addNodes(newNodesSourceId,newNodes)
     }
 
+    function toggleName(){
+        d3ForceEasy.toggleName()
+    }
+    function removeNode(){
+        d3ForceEasy.removeNode()
+    }
 </script>
 </html>

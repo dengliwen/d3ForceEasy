@@ -78,7 +78,7 @@
         return scale[i];
     }
 
-    let simulation,node,link,text,svg;
+    let simulation,node,link,text,svg,currentClick;
 
     function drawForce(userOption) {
         extend(option,userOption,true);
@@ -86,18 +86,17 @@
         const dom = option.dom;
         const height = dom.offsetHeight;
         const width = dom.offsetWidth;
-        const links = option.links;
-        const nodes = option.nodes;
 
 
 
-         simulation = d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).distance(200))
+         simulation = d3.forceSimulation(option.nodes)
+            .force("link", d3.forceLink(option.links).distance(200))
             .force("charge", d3.forceManyBody())
             .force("center", d3.forceCenter(width / 2, height / 2));
 
 
          svg = d3.select(`#${option.dom.id}`).append('svg')
+             .attr('id','d3ForceEasyStage')
             .attr("viewBox", [0, 0, width, height]);
 
         const marker = svg.append("marker")
@@ -111,7 +110,7 @@
             .attr("orient", "auto")//绘制方向，可设定为：auto（自动确认方向）和 角度值
             .attr("stroke-width",2)//箭头宽度
             .append("path")
-            .attr("d", "M0,-5L10,0L0,5")//箭头的路径
+            .attr("d", "M0,-3L10,0L0,3L3,0")//箭头的路径
             .attr('fill','#8d8a8e');//箭头颜色
 
 
@@ -119,22 +118,28 @@
             .attr("stroke", "#999")
             .attr("stroke-opacity", 0.6)
             .selectAll("line")
-            .data(links)
+            .data(option.links)
             .join("line")
              .attr("marker-end", "url(#resolved)")
             .attr("stroke-width", 1);
 
          node = svg.append("g")
             .selectAll("g")
-            .data(nodes)
+            .data(option.nodes)
             .join("g")
-            .attr('class', 'force-node')
+            .classed('force-node',true)
+             .on('click',(e,d)=>{
+                 currentClick = d;
+                 node.selectAll('circle').classed('selected',item=>item == d)
+             })
             .call(drag(simulation))
 
-            node.append('rect')
-            .attr('width', 25)
-            .attr('height', 30)
+            node.append('circle')
+            .attr('r', 15)
+            .attr('cx', 15)
+            .attr('cy', 15)
             .attr('fill','#ffffff')
+
 
             node.append('path')
             .attr("d", d => {
@@ -147,22 +152,20 @@
                 }
 
             })
-            .attr('class','icon-path')
+            .classed('icon-path',true)
             .attr("fill", option.color || color)
             .attr('transform','scale(0.03)')
 
             node.append('text')
             .text(d=>d.name)
-            .attr('class','node-text')
+            .classed('node-text',true)
+                .classed('hide',!option.text.show)
             .attr('style', d=>{
                 let trans = d.name.length*3;
                 return `transform: translate(-${trans}px, 42px);`
             });
 
 
-        if(!option.text.show){
-            svg.selectAll('.node-text').attr('style','display:none')
-        }
 
 
         node.append("title")
@@ -230,18 +233,23 @@
 
         node = node.data(option.nodes,d=>d.name).enter()
             .append("g")
-            .attr('class', 'force-node')
+            .classed('force-node',true)
             .merge(node)
+            .on('click',(e,d)=>{
+                currentClick = d;
+                node.selectAll('circle').classed('selected',item=>item == d)
+            })
             .call(drag(simulation))
 
             node.selectAll('rect').remove();
             node.selectAll('path').remove();
             node.selectAll('text').remove();
 
-            node.append('rect')
-                .attr('width', 25)
-                .attr('height', 30)
-                .attr('fill','#fff')
+        node.append('circle')
+            .attr('r', 15)
+            .attr('cx', 15)
+            .attr('cy', 15)
+            .attr('fill','#ffffff')
 
             node.append('path')
                 .attr("d", d => {
@@ -253,13 +261,14 @@
                         return defaultIcon
                     }
                 })
-                .attr('class','icon-path')
+                .classed('icon-path',true)
                 .attr("fill", option.color||color)
                 .attr('transform','scale(0.03)')
 
             node.append('text')
                 .text(d=>d.name)
-                .attr('class','node-text')
+                .classed('node-text',true)
+                .classed('hide',!option.text.show)
                 .attr('style', d=>{
                     let trans = d.name.length*3;
                     return `transform: translate(-${trans}px, 42px);`
@@ -274,8 +283,34 @@
 
     }
 
+    function toggleName(){
+        option.text.show = !option.text.show;
+        svg.selectAll('.node-text').classed('hide',!option.text.show)
+    }
+
+    function removeNode(){
+        let item = currentClick;
+        let index = option.nodes.findIndex(d=>d.name==item.name)
+        option.nodes.splice(index,1);
+
+        for(let i = option.links.length-1;i>=0;i--){
+            if((option.links[i].source.name == item.name) ||(option.links[i].target.name == item.name)){
+                option.links.splice(i,1)
+            }
+        }
+
+        node.data(option.nodes,d=>d.name).exit().remove();
+        link.data(option.links).exit().remove();
+
+        // simulation.nodes(option.nodes)
+        // simulation.force("link", d3.forceLink(option.links).distance(200))
+        // simulation.restart();
+    }
+
     exports.drawForce = drawForce;
     exports.addNodes = addNodes;
+    exports.toggleName = toggleName;
+    exports.removeNode = removeNode;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 })))

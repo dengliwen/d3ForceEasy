@@ -81,5 +81,14 @@ const links = [
 **新增节点**
 
     d3ForceEasy.addNodes(newNodesSourceId = 0,newNodes = [])
+  
+**删除选中节点**
+
+    d3ForceEasy.removeNode()
+    
+**显示/隐藏名称**
+
+    d3ForceEasy.toggleName()
+
 
 升级改造中。。。
