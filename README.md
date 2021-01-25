@@ -2,6 +2,11 @@
 < 一个封装D3js force力导向图 简单使用的轮子>
 
 >依赖d3.js >v4.0.0
+
+### 示例
+> 代码在test文件中
+
+![avatar](img/test1.png)
 ### 使用方法
 
     1.npm install d3_force_easy --save
@@ -49,7 +54,7 @@ const links = [
 ```
  const option = {
         *dom: document.getElementsByTagName('app'),
-        color: '#00a8ff',
+        color: '#00a8ff',//单色或['#fff',#'ccc'...]，无color默认随机色
         *nodes:this.nodes,//参考上面的实例数据
         *links:this.links,
         icons:[{type:'ip',icon:'(svg <path>的d路径属性)'},...],

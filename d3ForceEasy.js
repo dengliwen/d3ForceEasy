@@ -107,7 +107,10 @@
          svg = d3.select(`#${option.dom.id}`).append('svg')
              .attr('id','d3ForceEasyStage')
             .attr("viewBox", [0, 0, width, height])
-             .call(zoom);
+
+             if(option.zoom){
+                svg.call(zoom);
+             }
 
         stage_g = svg.append('g').classed('stage-g',true);
 
@@ -168,7 +171,17 @@
 
             })
             .classed('icon-path',true)
-            .attr("fill", option.color || color)
+            .attr("fill", (d,i)=>{
+                if(option.color){
+                    if(typeof option.color == 'string'){
+                        return option.color
+                    }else{
+                        return option.color[i] || option.color.unshift();
+                    }
+                }else{
+                     return color(d,i)
+                }
+            })
             .attr('transform','scale(0.03)')
 
             node.append('text')
@@ -277,7 +290,17 @@
                     }
                 })
                 .classed('icon-path',true)
-                .attr("fill", option.color||color)
+                .attr("fill", (d,i)=>{
+                    if(option.color){
+                        if(typeof option.color == 'string'){
+                            return option.color
+                        }else{
+                            return option.color[i] || option.color.unshift();
+                        }
+                    }else{
+                        return color(d,i)
+                    }
+                })
                 .attr('transform','scale(0.03)')
 
             node.append('text')
