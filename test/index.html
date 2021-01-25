@@ -81,5 +81,9 @@
     function removeNode(){
         d3ForceEasy.removeNode()
     }
+
+    document.addEventListener('click',()=>{
+      console.log(d3ForceEasy.currentNode())
+    })
 </script>
 </html>

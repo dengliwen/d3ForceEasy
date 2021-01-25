@@ -9,7 +9,9 @@
         color: '',
         nodes: [],
         links: [],
-        icons: [],
+        icons: [],//[],'circle'
+        zoom:true,
+        zoomRange:[1,8],
         text:{
             show:true,
             style:''
@@ -35,7 +37,7 @@
         // }
     }
 
-    const defaultIcon = 'M512 42.666667C252.288 42.666667 42.666667 252.288 42.666667 512s209.621333 469.333333 469.333333 469.333333 469.333333-209.621333 469.333333-469.333333S771.712 42.666667 512 42.666667z m0 611.712A142.890667 142.890667 0 0 1 369.621333 512 142.890667 142.890667 0 0 1 512 369.621333 142.890667 142.890667 0 0 1 654.378667 512 142.890667 142.890667 0 0 1 512 654.378667z'
+    const defaultIcon = 'M938.666667 512A426.666667 426.666667 0 1 1 512 85.333333a426.666667 426.666667 0 0 1 426.666667 426.666667z'
 
 
 
@@ -78,16 +80,23 @@
         return scale[i];
     }
 
-    let simulation,node,link,text,svg,currentClick;
+    let simulation,node,link,text,svg,stage_g,currentClick,width,height;
 
     function drawForce(userOption) {
         extend(option,userOption,true);
 
         const dom = option.dom;
-        const height = dom.offsetHeight;
-        const width = dom.offsetWidth;
+         height = dom.offsetHeight;
+         width = dom.offsetWidth;
 
+        function zoomed(event) {
+            const {transform} = event;
+            stage_g.attr('transform',`translate(${transform.x},${transform.y}),scale(${transform.k})`)
+        }
 
+        const zoom = d3.zoom()
+            .scaleExtent(option.zoomRange)
+            .on("zoom", zoomed);
 
          simulation = d3.forceSimulation(option.nodes)
             .force("link", d3.forceLink(option.links).distance(200))
@@ -97,9 +106,15 @@
 
          svg = d3.select(`#${option.dom.id}`).append('svg')
              .attr('id','d3ForceEasyStage')
-            .attr("viewBox", [0, 0, width, height]);
+            .attr("viewBox", [0, 0, width, height])
+             .call(zoom);
 
-        const marker = svg.append("marker")
+        stage_g = svg.append('g').classed('stage-g',true);
+
+
+
+
+        const marker = stage_g.append("marker")
             .attr("id", "resolved")
             .attr("markerUnits","userSpaceOnUse")
             .attr("viewBox", "0 -5 10 10")//坐标系的区域
@@ -114,7 +129,7 @@
             .attr('fill','#8d8a8e');//箭头颜色
 
 
-         link = svg.append("g")
+         link = stage_g.append("g")
             .attr("stroke", "#999")
             .attr("stroke-opacity", 0.6)
             .selectAll("line")
@@ -123,9 +138,9 @@
              .attr("marker-end", "url(#resolved)")
             .attr("stroke-width", 1);
 
-         node = svg.append("g")
+         node = stage_g.append("g")
             .selectAll("g")
-            .data(option.nodes)
+            .data(option.nodes,d=>d.id)
             .join("g")
             .classed('force-node',true)
              .on('click',(e,d)=>{
@@ -231,7 +246,7 @@
             .attr("marker-end", "url(#resolved)")
             .merge(link);
 
-        node = node.data(option.nodes,d=>d.name).enter()
+        node = node.data(option.nodes,d=>d.id).enter()
             .append("g")
             .classed('force-node',true)
             .merge(node)
@@ -278,7 +293,8 @@
 
 
         simulation.nodes(option.nodes)
-        simulation.force("link", d3.forceLink(option.links).distance(200))
+        simulation.force("link", d3.forceLink(option.links).distance(200)).force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter(width / 2, height / 2));
         simulation.restart();
 
     }
@@ -290,16 +306,16 @@
 
     function removeNode(){
         let item = currentClick;
-        let index = option.nodes.findIndex(d=>d.name==item.name)
+        let index = option.nodes.findIndex(d=>d.id==item.id)
         option.nodes.splice(index,1);
 
         for(let i = option.links.length-1;i>=0;i--){
-            if((option.links[i].source.name == item.name) ||(option.links[i].target.name == item.name)){
+            if((option.links[i].source.id == item.id) ||(option.links[i].target.id == item.id)){
                 option.links.splice(i,1)
             }
         }
 
-        node.data(option.nodes,d=>d.name).exit().remove();
+        node.data(option.nodes,d=>d.id).exit().remove();
         link.data(option.links).exit().remove();
 
         // simulation.nodes(option.nodes)
@@ -311,6 +327,7 @@
     exports.addNodes = addNodes;
     exports.toggleName = toggleName;
     exports.removeNode = removeNode;
+    exports.currentNode = ()=>{return currentClick};
 
     Object.defineProperty(exports, '__esModule', { value: true });
 })))

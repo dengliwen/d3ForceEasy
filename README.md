@@ -9,6 +9,7 @@
     2.引入配置和数据
     
     import  d3ForceEasy from 'd3_force_easy'
+    import 'd3ForceEasy.css'
     
     ...
     //基础配置
@@ -44,35 +45,20 @@ const links = [
 ```
 
 ### 详细配置
+> *为必填项
 ```
  const option = {
-        dom: document.getElementsByTagName('app'),
+        *dom: document.getElementsByTagName('app'),
         color: '#00a8ff',
-        nodes:this.nodes,
-        links:this.links,
+        *nodes:this.nodes,//参考上面的实例数据
+        *links:this.links,
         icons:[{type:'ip',icon:'(svg <path>的d路径属性)'},...],
+        //icon默认为圆形
+        zoom:true,//开启缩放
+        zoomRange:[1,8],//缩放范围
         text:{
-            show:true,
-            style:''
+            show:true, //初始显示文字与否
         },
-        forceParams:{ //力导向参数
-            center:{
-                x:0,
-                y:0
-            },//向心力
-            collide:{
-                radius:1,
-                strength:1,//[0,1]碰撞强度
-            },//碰撞力
-            link:{
-                distance:0,
-                strength:0,
-                id:'index',//links使用标识
-            },//弹簧模型
-            charge:{
-                strength:-30,//负值相互排斥
-            },//电荷力模型
-        }
 }
 ```
 
@@ -81,6 +67,7 @@ const links = [
 **新增节点**
 
     d3ForceEasy.addNodes(newNodesSourceId = 0,newNodes = [])
+    //newNodesSourceId->源节点id，newNodes->新增节点数组 
   
 **删除选中节点**
 
@@ -88,7 +75,16 @@ const links = [
     
 **显示/隐藏名称**
 
-    d3ForceEasy.toggleName()
+    d3ForceEasy.toggleName()    
+    
+**返回当前选中节点数据**
+
+    d3ForceEasy.currentNode()
+
+
+### 样式
+**可使用css覆盖相应节点和连线的颜色**
+
 
 
 升级改造中。。。
