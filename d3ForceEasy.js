@@ -141,57 +141,7 @@
              .attr("marker-end", "url(#resolved)")
             .attr("stroke-width", 1);
 
-         node = stage_g.append("g")
-            .selectAll("g")
-            .data(option.nodes,d=>d.id)
-            .join("g")
-            .classed('force-node',true)
-             .on('click',(e,d)=>{
-                 currentClick = d;
-                 node.selectAll('circle').classed('selected',item=>item == d)
-             })
-            .call(drag(simulation))
-
-            node.append('circle')
-            .attr('r', 15)
-            .attr('cx', 15)
-            .attr('cy', 15)
-            .attr('fill','#ffffff')
-
-
-            node.append('path')
-            .attr("d", d => {
-                if(option.icons.length){
-                    return option.icons.find(item => {
-                        return item.type == d.type
-                    }).icon;
-                }else{
-                    return defaultIcon
-                }
-
-            })
-            .classed('icon-path',true)
-            .attr("fill", (d,i)=>{
-                if(option.color){
-                    if(typeof option.color == 'string'){
-                        return option.color
-                    }else{
-                        return option.color[i] || option.color.unshift();
-                    }
-                }else{
-                     return color(d,i)
-                }
-            })
-            .attr('transform','scale(0.03)')
-
-            node.append('text')
-            .text(d=>d.name)
-            .classed('node-text',true)
-                .classed('hide',!option.text.show)
-            .attr('style', d=>{
-                let trans = d.name.length*3;
-                return `transform: translate(-${trans}px, 42px);`
-            });
+         drawNodes(stage_g);
 
 
 
@@ -212,6 +162,67 @@
             // text.attr("x", d => d.x)
             //     .attr("y", d => d.y)
         });
+    }
+
+    function drawNodes(enter,flag){
+        node = enter.append("g")
+            .selectAll("g")
+            .data(option.nodes,d=>d.id)
+            .join("g")
+            .classed('force-node',true)
+            .on('click',(e,d)=>{
+                currentClick = d;
+                node.selectAll('circle').classed('selected',item=>item == d)
+            })
+            .call(drag(simulation));
+
+        if (flag == 'add') {
+            node.merge(node)
+            node.selectAll('rect').remove();
+            node.selectAll('path').remove();
+            node.selectAll('text').remove();
+        }
+        node.append('circle')
+            .attr('r', 15)
+            .attr('cx', 15)
+            .attr('cy', 15)
+            .attr('fill','#ffffff')
+
+
+        node.append('path')
+            .attr("d", d => {
+                if(option.icons.length){
+                    return option.icons.find(item => {
+                        return item.type == d.type
+                    }).icon;
+                }else{
+                    return defaultIcon
+                }
+
+            })
+            .classed('icon-path',true)
+            .attr("fill", (d,i)=>{
+                if(option.color){
+                    if(typeof option.color == 'string'){
+                        return option.color
+                    }else{
+                        return option.color[i] || option.color.unshift();
+                    }
+                }else{
+                    return color(d,i)
+                }
+            })
+            .attr('transform','scale(0.03)')
+
+        node.append('text')
+            .text(d=>d.name)
+            .classed('node-text',true)
+            .classed('hide',!option.text.show)
+            .attr('style', d=>{
+                let trans = d.name.length*3;
+                return `transform: translate(-${trans}px, 42px);`
+            });
+
     }
 
     function addNodes(sourceId,newNodes){
@@ -259,58 +270,59 @@
             .attr("marker-end", "url(#resolved)")
             .merge(link);
 
-        node = node.data(option.nodes,d=>d.id).enter()
-            .append("g")
-            .classed('force-node',true)
-            .merge(node)
-            .on('click',(e,d)=>{
-                currentClick = d;
-                node.selectAll('circle').classed('selected',item=>item == d)
-            })
-            .call(drag(simulation))
-
-            node.selectAll('rect').remove();
-            node.selectAll('path').remove();
-            node.selectAll('text').remove();
-
-        node.append('circle')
-            .attr('r', 15)
-            .attr('cx', 15)
-            .attr('cy', 15)
-            .attr('fill','#ffffff')
-
-            node.append('path')
-                .attr("d", d => {
-                    if(option.icons.length){
-                        return option.icons.find(item => {
-                            return item.type == d.type
-                        }).icon;
-                    }else{
-                        return defaultIcon
-                    }
-                })
-                .classed('icon-path',true)
-                .attr("fill", (d,i)=>{
-                    if(option.color){
-                        if(typeof option.color == 'string'){
-                            return option.color
-                        }else{
-                            return option.color[i] || option.color.unshift();
-                        }
-                    }else{
-                        return color(d,i)
-                    }
-                })
-                .attr('transform','scale(0.03)')
-
-            node.append('text')
-                .text(d=>d.name)
-                .classed('node-text',true)
-                .classed('hide',!option.text.show)
-                .attr('style', d=>{
-                    let trans = d.name.length*3;
-                    return `transform: translate(-${trans}px, 42px);`
-                });
+        drawNodes(node.data(option.nodes,d=>d.id).enter(),'add')
+        // node = node.data(option.nodes,d=>d.id).enter()
+        //     .append("g")
+        //     .classed('force-node',true)
+        //     .merge(node)
+        //     .on('click',(e,d)=>{
+        //         currentClick = d;
+        //         node.selectAll('circle').classed('selected',item=>item == d)
+        //     })
+        //     .call(drag(simulation))
+        //
+        //     node.selectAll('rect').remove();
+        //     node.selectAll('path').remove();
+        //     node.selectAll('text').remove();
+        //
+        // node.append('circle')
+        //     .attr('r', 15)
+        //     .attr('cx', 15)
+        //     .attr('cy', 15)
+        //     .attr('fill','#ffffff')
+        //
+        //     node.append('path')
+        //         .attr("d", d => {
+        //             if(option.icons.length){
+        //                 return option.icons.find(item => {
+        //                     return item.type == d.type
+        //                 }).icon;
+        //             }else{
+        //                 return defaultIcon
+        //             }
+        //         })
+        //         .classed('icon-path',true)
+        //         .attr("fill", (d,i)=>{
+        //             if(option.color){
+        //                 if(typeof option.color == 'string'){
+        //                     return option.color
+        //                 }else{
+        //                     return option.color[i] || option.color.unshift();
+        //                 }
+        //             }else{
+        //                 return color(d,i)
+        //             }
+        //         })
+        //         .attr('transform','scale(0.03)')
+        //
+        //     node.append('text')
+        //         .text(d=>d.name)
+        //         .classed('node-text',true)
+        //         .classed('hide',!option.text.show)
+        //         .attr('style', d=>{
+        //             let trans = d.name.length*3;
+        //             return `transform: translate(-${trans}px, 42px);`
+        //         });
 
 
 
