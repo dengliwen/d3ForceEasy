@@ -29,6 +29,7 @@
  
     d3ForceEasy.drawForce(option)
 
+>其他引用方式请引用d3ForceEasy.js文件
 
 ### 测试数据
 ```
